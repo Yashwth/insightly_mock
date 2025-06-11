@@ -1,16 +1,13 @@
 import  { useState } from 'react';
 import {useLoginMutation} from '../api/userService';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../store/slices/userSlice';
+import { setUser } from '../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
-
-
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [login,{data, error, isLoading}] = useLoginMutation();
-
     const [useremail,setUserEmail] = useState('');
     const [password,setPassword] = useState('');
 
@@ -22,11 +19,12 @@ const Login = () => {
         password: password,
         captchaResponse: ''
       }).unwrap();
+      console.log(res);
 
       dispatch(setUser(res));
+      localStorage.setItem('user', JSON.stringify(res));
 
-      console.log(res);
-      navigate('/dashboard');
+      if (res) navigate('/dashboard');
     } catch (err: any) {
       console.log(err);
       alert("login failed");

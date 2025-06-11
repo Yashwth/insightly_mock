@@ -17,30 +17,23 @@ import {
     MdDashboard,
     MdGroup,
     MdSettings,
-    MdOutlineStackedBarChart,
     MdKeyboardArrowLeft,
     MdOutlineKeyboardArrowRight,
-    MdLogout,
-    MdPerson
+ 
 } from 'react-icons/md';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { clearUser } from '../store/slices/userSlice';
-import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { type RootState } from '../store/Store';
-
+import { RootState } from '../store/RootState';
+import { useNavigate } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
+import WhisperComponent from '../components/Whisper';
 
 const Dashboard = () => {
     const [expand, setExpand] = useState(true);
-    const dispatch = useDispatch();
+
+    const user = useSelector((state: RootState) => state.auth.user);
+    console.log("theta",user);
     const navigate = useNavigate();
-    const handleLogout = () => {
-        dispatch(clearUser());
-        navigate('/login');
-    }
-    const user = useSelector((state: RootState) => state.user);
-    console.log(user);
     return (
         <div className="w-screen h-screen flex overflow-hidden">
             <Container>
@@ -53,7 +46,7 @@ const Dashboard = () => {
                         <Brand expand={expand} />
                     </Sidenav.Header>
                     <div className='flex-1 overflow-auto'>
-                        <Sidenav expanded={expand} defaultOpenKeys={['3']} appearance="subtle">
+                        <Sidenav expanded={expand} defaultOpenKeys={['1']} appearance="subtle">
                             <Sidenav.Body>
                                 <Nav defaultActiveKey="1">
                                     <Nav.Menu
@@ -62,7 +55,7 @@ const Dashboard = () => {
                                         title="Overview"
                                         icon={<Icon as={MdDashboard} />}
                                     >
-                                        <Nav.Item eventKey="1-1">Dashboard</Nav.Item>
+                                        <Nav.Item eventKey="1-1" onClick={()=> navigate('/dashboard/org-goals')}>Overview</Nav.Item>
                                         <Nav.Item eventKey="1-2">Dashboard</Nav.Item>
                                         <Nav.Item eventKey="1-3">Dashboard</Nav.Item>
                                         <Nav.Item eventKey="1-4">Dashboard</Nav.Item>
@@ -74,13 +67,13 @@ const Dashboard = () => {
                                         title="User Group"
                                         icon={<Icon as={MdGroup} />}
                                     >
-                                        <Nav.Item eventKey="2-1">Dashboard</Nav.Item>
+                                        <Nav.Item eventKey="2-1">Coding</Nav.Item>
                                         <Nav.Item eventKey="2-2">Dashboard</Nav.Item>
                                         <Nav.Item eventKey="2-3">Dashboard</Nav.Item>
                                         <Nav.Item eventKey="2-4">Dashboard</Nav.Item>
                                         <Nav.Item eventKey="2-5">Dashboard</Nav.Item>
                                     </Nav.Menu>
-                                    <Nav.Menu
+                                        {/* <Nav.Menu
                                         eventKey="3"
                                         trigger="hover"
                                         title="Advanced"
@@ -92,7 +85,7 @@ const Dashboard = () => {
                                         <Nav.Item eventKey="3-3">Brand</Nav.Item>
                                         <Nav.Item eventKey="3-4">Loyalty</Nav.Item>
                                         <Nav.Item eventKey="3-5">Visit Depth</Nav.Item>
-                                    </Nav.Menu>
+                                    </Nav.Menu> */}
                                     <Nav.Menu
                                         eventKey="4"
                                         trigger="hover"
@@ -118,21 +111,9 @@ const Dashboard = () => {
 
                     <div className="p-4 border-t border-gray-700">
                         {expand ? (
-                            <button
-                                onClick={handleLogout}
-                                className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded text-sm flex items-center justify-center gap-2"
-                            >
-                                <MdLogout />
-                                Logout
-                            </button>
+                            <WhisperComponent user={user} />
                         ) : (
-                            <button
-                                onClick={handleLogout}
-                                className="w-10 h-10 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-full mx-auto"
-                                title="Logout"
-                            >
-                                <MdPerson size={40} />
-                            </button>
+                            <WhisperComponent user={user} />
                         )}
 
                         <NavToggle expand={expand} onChange={() => setExpand(!expand)} />
@@ -147,7 +128,7 @@ const Dashboard = () => {
                             <Breadcrumb.Item active>Overview</Breadcrumb.Item>
                         </Breadcrumb>
                     </Header>
-                    <Content>Content</Content>
+                    <Content>  <Outlet /></Content>
                 </Container>
 
             </Container>
