@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useGetTeamMetricsMutation } from '../../api/goalApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/RootState';
-import {    Table , Tooltip, Whisper} from 'rsuite';
+import {    Row, Table , Tooltip, Whisper} from 'rsuite';
 import { columnConfig } from '../../constants/goalsTable';
 
 const { Column, HeaderCell, Cell } = Table;
@@ -10,10 +10,16 @@ const { Column, HeaderCell, Cell } = Table;
 const TeamMetrics = () => {
     const [getMetrics, { data, error, isLoading }] = useGetTeamMetricsMutation();
     console.log('data', data)
+    const filteredData= data?.filter((item:any)=> item.teamName !== 'ALL')
+
     const user = useSelector((state: RootState) => state.auth.user);
     const token = user.user.authToken;
     const userId = user.user.id;
     const accessToken = user.accessToken;
+    let selectedTeamIds = [];
+    if(localStorage.getItem('selectedTeamIds')){
+        selectedTeamIds = JSON.parse(localStorage.getItem('selectedTeamIds') || '[]');
+    }
     useEffect(() => {
         if (!token) return;
 
@@ -22,7 +28,7 @@ const TeamMetrics = () => {
             userId,
             body: {
                 userId,
-                teamIds: [6298, 6299, 6301, 6302, 6303],
+                teamIds: selectedTeamIds,
                 startDate: 1747180800,
                 endDate: 1749686400,
                 organizationId: 1960,
@@ -41,12 +47,12 @@ const TeamMetrics = () => {
             {/* <h2>Team Metrics</h2>
             <pre>{JSON.stringify(data, null, 2)}</pre> */}
             <Table
-            data={data}
+            data={filteredData}
             height={400}
             cellBordered
-            rowKey="id"
+            rowKey="teamId"
             onRowClick={(row) => console.log(row)}>
-                <Column width={200} fixed>
+                <Column width={200} align='center' fixed="left">
                     <HeaderCell>Team Name</HeaderCell>
                     <Cell dataKey="teamName" />
                 </Column>   
