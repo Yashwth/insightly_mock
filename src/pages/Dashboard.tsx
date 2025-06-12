@@ -1,11 +1,11 @@
 import {
     Container,
-    Header,
+    // Header,
     Sidebar,
     Sidenav,
     Content,
     Nav,
-    Breadcrumb,
+    // Breadcrumb,
     IconButton,
     HStack,
     Stack,
@@ -55,11 +55,8 @@ const Dashboard = () => {
                                         title="Overview"
                                         icon={<Icon as={MdDashboard} />}
                                     >
-                                        <Nav.Item eventKey="1-1" onClick={()=> navigate('/dashboard/org-goals')}>Overview</Nav.Item>
-                                        <Nav.Item eventKey="1-2">Dashboard</Nav.Item>
-                                        <Nav.Item eventKey="1-3">Dashboard</Nav.Item>
-                                        <Nav.Item eventKey="1-4">Dashboard</Nav.Item>
-                                        <Nav.Item eventKey="1-5">Dashboard</Nav.Item>
+                                        <Nav.Item eventKey="1-1" onClick={()=> navigate('/dashboard/org-goals')}>Goals</Nav.Item>
+
                                     </Nav.Menu>
                                     <Nav.Menu
                                         eventKey="2"
@@ -68,10 +65,6 @@ const Dashboard = () => {
                                         icon={<Icon as={MdGroup} />}
                                     >
                                         <Nav.Item eventKey="2-1">Coding</Nav.Item>
-                                        <Nav.Item eventKey="2-2">Dashboard</Nav.Item>
-                                        <Nav.Item eventKey="2-3">Dashboard</Nav.Item>
-                                        <Nav.Item eventKey="2-4">Dashboard</Nav.Item>
-                                        <Nav.Item eventKey="2-5">Dashboard</Nav.Item>
                                     </Nav.Menu>
                                         {/* <Nav.Menu
                                         eventKey="3"
@@ -86,7 +79,7 @@ const Dashboard = () => {
                                         <Nav.Item eventKey="3-4">Loyalty</Nav.Item>
                                         <Nav.Item eventKey="3-5">Visit Depth</Nav.Item>
                                     </Nav.Menu> */}
-                                    <Nav.Menu
+                                    {/* <Nav.Menu
                                         eventKey="4"
                                         trigger="hover"
                                         title="Settings"
@@ -98,7 +91,7 @@ const Dashboard = () => {
                                         <Nav.Item eventKey="4-3">Channels</Nav.Item>
                                         <Nav.Item eventKey="4-4">Tags</Nav.Item>
                                         <Nav.Item eventKey="4-5">Versions</Nav.Item>
-                                    </Nav.Menu>
+                                    </Nav.Menu> */}
 
 
                                 </Nav>
@@ -121,13 +114,13 @@ const Dashboard = () => {
                 </Sidebar>
 
                 <Container className="w-full h-full">
-                    <Header className="page-header">
+                    {/* <Header className="page-header">
                         <Breadcrumb>
                             <Breadcrumb.Item href="#">Home</Breadcrumb.Item>
                             <Breadcrumb.Item href="##">Dashboard</Breadcrumb.Item>
                             <Breadcrumb.Item active>Overview</Breadcrumb.Item>
                         </Breadcrumb>
-                    </Header>
+                    </Header> */}
                     <Content>  <Outlet /></Content>
                 </Container>
 
