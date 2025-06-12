@@ -3,23 +3,31 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/RootState';
 import TeamMetrics from '../components/table';
 import TeamSelector from '../components/TeamSelector';
+import { useEffect, useState } from 'react';
+
 const OrgGoals = () => {
-    const user = useSelector((state: RootState) => state.auth.user.user);
-    const { data, error, isFetching } = useGetTeamsQuery({ uid: user.id });
-    console.log("uid", user.id);
-    console.log("data actual", data);
+  const user = useSelector((state: RootState) => state.auth.user.user);
+  const { data, error, isFetching } = useGetTeamsQuery({ uid: user.id });
 
-    if (isFetching) return <div>Loading...</div>;
-    if (error) return <div>Error loading teams</div>;
+  const [selectedTeamIds, setSelectedTeamIds] = useState<number[]>([]);
 
-    return (
-        <div>
-            <TeamSelector data={data} onConfirm={(ids) => console.log(ids)} />
+  // On first load, sync with localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('selectedTeamIds');
+    if (stored) {
+      setSelectedTeamIds(JSON.parse(stored));
+    }
+  }, []);
 
-            <TeamMetrics />
+  if (isFetching) return <div>Loading...</div>;
+  if (error) return <div>Error loading teams</div>;
 
-        </div>
-    );
+  return (
+    <div>
+      <TeamSelector data={data} onConfirm={setSelectedTeamIds} />
+      <TeamMetrics selectedTeamIds={selectedTeamIds} />
+    </div>
+  );
 };
 
 export default OrgGoals;

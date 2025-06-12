@@ -7,7 +7,7 @@ import { columnConfig } from '../../constants/goalsTable';
 
 const { Column, HeaderCell, Cell } = Table;
 
-const TeamMetrics = () => {
+const TeamMetrics = ({selectedTeamIds}: {selectedTeamIds: number[]}) => {
     const [getMetrics, { data, error, isLoading }] = useGetTeamMetricsMutation();
     console.log('data', data)
     const filteredData= data?.filter((item:any)=> item.teamName !== 'ALL')
@@ -16,29 +16,25 @@ const TeamMetrics = () => {
     const token = user.user.authToken;
     const userId = user.user.id;
     const accessToken = user.accessToken;
-    let selectedTeamIds = [];
-    if(localStorage.getItem('selectedTeamIds')){
-        selectedTeamIds = JSON.parse(localStorage.getItem('selectedTeamIds') || '[]');
-    }
+    
     useEffect(() => {
-        if (!token) return;
-
-        getMetrics({    
-            token,
+        if (!token || selectedTeamIds.length === 0) return;
+      
+        getMetrics({
+          token,
+          userId,
+          body: {
             userId,
-            body: {
-                userId,
-                teamIds: selectedTeamIds,
-                startDate: 1747180800,
-                endDate: 1749686400,
-                organizationId: 1960,
-                orgId: 1960,
-            },
-            accessToken,
-
+            teamIds: selectedTeamIds,
+            startDate: 1747180800,
+            endDate: 1749686400,
+            organizationId: 1960,
+            orgId: 1960,
+          },
+          accessToken,
         });
-    }, [token, getMetrics]);
-
+      }, [token, getMetrics, selectedTeamIds]);
+      
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error: {JSON.stringify(error)}</p>;
 
