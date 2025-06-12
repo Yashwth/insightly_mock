@@ -19,7 +19,22 @@ export const goalApi = createApi({
         },
       }),
     }),
+    getAuthorMetrics: builder.mutation({
+      query: ({ body, token, userId, accessToken }) => ({
+        url: 'goals/author/metric',
+        method: 'POST',
+        body,
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'x-user-id': userId.toString(),
+          'x-organization-id': '1960',
+          'x-access-token': `${accessToken}`,
+          'content-type': 'application/json',
+          'userid': userId.toString(),
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetTeamMetricsMutation } = goalApi;
+export const { useGetTeamMetricsMutation, useGetAuthorMetricsMutation } = goalApi;
