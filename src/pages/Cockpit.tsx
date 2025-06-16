@@ -45,7 +45,7 @@ export default function Cockpit() {
 
         <div
           key={t.id}
-          className="flex items-center justify-between bg-white border rounded-lg p-4 shadow-sm"
+          className="flex items-center justify-between bg-white border rounded-lg p-4 shadow-sm hover:scale-101 transition-all duration-300"
         >
           <div className="flex items-center gap-3">
             <div className="text-purple-600 bg-purple-100 p-2 rounded-md">

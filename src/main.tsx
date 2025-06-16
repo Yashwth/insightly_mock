@@ -8,7 +8,8 @@ import { Provider } from 'react-redux'
 import { store } from './store/Store.ts'
 import Dashboard from './pages/Dashboard.tsx'
 import OrgGoals from './pages/OrgGoals.tsx'
-import Cockpit from './pages/Cockpit.tsx'
+import Cockpit from './pages/CockPit.tsx'
+import MetricOverview from './pages/MetricOverview.tsx'
 import CustomDashboard from './pages/CustomDashboard.tsx'
 import 'rsuite/dist/rsuite.min.css';  // or 'rsuite/styles/index.less';
 
@@ -26,7 +27,10 @@ createRoot(document.getElementById('root')!).render(
         <Route path="org-goals" element={<OrgGoals />} />
         <Route path="cockpit" element={<Cockpit />} />
         <Route path="template/:id" element={<CustomDashboard />} />
+        <Route path="overview/:graphName" element={<MetricOverview />} />
+
       </Route>
+
 
     </Routes>
     </BrowserRouter>

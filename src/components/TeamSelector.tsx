@@ -48,7 +48,7 @@ const TeamSelector = ({
         cleanable={false}
         searchable={false}
         renderExtraFooter={() => (
-          <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ padding: '', display: 'flex', flexDirection: 'column', gap: 8 }}>
             <Checkbox
               checked={isAllSelected}
               onChange={(value, checked) =>
@@ -57,7 +57,7 @@ const TeamSelector = ({
             >
               {isAllSelected ? 'Deselect All' : 'Select All'}
             </Checkbox>
-            <Button appearance="primary" block onClick={handleConfirm}>
+            <Button style={{ width: '50%' ,alignSelf: 'center' }} appearance="primary" block onClick={handleConfirm}>
               Confirm
             </Button>
           </div>

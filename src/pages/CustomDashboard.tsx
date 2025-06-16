@@ -1,7 +1,7 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useGetMetricGraphDataMutation } from '../api/dashboardApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/RootState';
@@ -25,6 +25,7 @@ export default function CustomDashboard() {
   const [graphs, setGraphs] = useState<any[]>([]);
   const [metrics, setMetrics] = useState<any[]>([]);
   const [currTemplate, setCurrTemplate] = useState<string>('');
+
 
   const storedDuration = JSON.parse(localStorage.getItem('duration') || '{}');
   const [duration, setDuration] = useState<{
@@ -126,7 +127,6 @@ export default function CustomDashboard() {
 
   if (isFetching) return <div>Loading...</div>;
   if (error) return <div>Error loading teams</div>;
-
   return (
     <div className="">
       <Header>
@@ -143,43 +143,54 @@ export default function CustomDashboard() {
         />
         <Duration onChange={setDuration} />
       </Stack>
-
-      {graphs.map((graph) => (
-        <div key={graph.name} className="bg-white shadow-md rounded-lg p-4">
-            
-          <div className="flex items-center justify-between">
-            <h2 style={{fontSize: '24px', fontWeight: 'bold'}}>{graph.name}</h2>
-            <div className="text-sm">
-              <span
-                className={`font-semibold ${
-                  graph.trend === 'NEGATIVE' ? 'text-red-500' : 'text-green-600'
-                }`}
-              >
-                {graph.trend === 'NEGATIVE' ? '↓' : '↑'} {graph.changePercentage}% ({graph.value})
-              </span>
-            </div>
+  
+      <div className="flex flex-wrap gap-4 mt-6">
+  {graphs.map((graph) => (
+    <Link
+      key={graph.name}
+      to={`/dashboard/overview/${metrics.find((metric) => metric.metricName === graph.name)?.metricKey}`}
+      className="w-[49%] sm:w-[100%] lg:w-[49%] xl:w-[49%] transition-all duration-300 hover:scale-[1.02]"
+    >
+      <div className="flex flex-col bg-white cursor-pointer shadow-md rounded-lg p-4 h-full">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold">{graph.name}</h2>
+          <div className="text-sm">
+            <span
+              className={`font-semibold ${
+                graph.trend === 'NEGATIVE' ? 'text-red-500' : 'text-green-600'
+              }`}
+            >
+              {graph.trend === 'NEGATIVE' ? '↓' : '↑'} {graph.changePercentage}% ({graph.value})
+            </span>
           </div>
-          <hr className="my-4"/>
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={{
-              chart: { type: 'area', height: 250 },
-              title: { text: undefined },
-              xAxis: { type: 'datetime' },
-              yAxis: { title: { text: 'Total Metric Count' } },
-              series: [
-                {
-                  name: graph.name,
-                  data: graph.seriesData,
-                  color: graph.trend === 'NEGATIVE' ? '#EF4444' : '#10B981',
-                },
-              ],
-              credits: { enabled: false },
-              tooltip: { shared: true },
-            }}
-          />
         </div>
-      ))}
+
+        <hr className="my-4" />
+
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={{
+            chart: { type: 'area', height: 250 },
+            title: { text: undefined },
+            xAxis: { type: 'datetime' },
+            yAxis: { title: { text: 'Total Metric Count' } },
+            series: [
+              {
+                name: graph.name,
+                data: graph.seriesData,
+                color: graph.trend === 'NEGATIVE' ? '#EF4444' : '#10B981',
+              },
+            ],
+            credits: { enabled: false },
+            tooltip: { shared: true },
+          }}
+        />
+      </div>
+    </Link>
+  ))}
+</div>
+
     </div>
   );
+  
 }

@@ -36,8 +36,38 @@ export const dashboardApi = createApi({
           },
         }),
       }),
+      getOverviewMetricSummary: builder.mutation({
+        query: ({ body, token, userId, accessToken }) => ({
+          url: `/overview/v2/team/metric-summary`,
+          method: 'POST',
+          body,
+          headers: {
+            'authorization': `Bearer ${token}`,
+            'x-user-id': userId.toString(),
+            'x-organization-id': '1960',
+            'x-access-token': `${accessToken}`,
+            'content-type': 'application/json',
+            'userid': userId.toString(),
+          },
+        }),
+      }),
+      getOverviewMetricGraphData: builder.mutation({
+        query: ({ body, token, userId, accessToken }) => ({
+          url: `/overview/v2/team/metric`,
+          method: 'POST',
+          body,
+          headers: {
+            'authorization': `Bearer ${token}`,
+            'x-user-id': userId.toString(),
+            'x-organization-id': '1960',
+            'x-access-token': `${accessToken}`,
+            'content-type': 'application/json',
+            'userid': userId.toString(),
+          },
+        }),
+      }),
     }),
   });
 
-export const { useGetMetricGraphDataMutation } = dashboardApi;
+export const { useGetMetricGraphDataMutation, useGetOverviewMetricSummaryMutation, useGetOverviewMetricGraphDataMutation } = dashboardApi;
 
