@@ -23,10 +23,12 @@ const TeamSelector = ({
 
     setSelectedIds(defaultIds);
   }, [data]);
+
   const allTeamIds = teamOptions.map((t) => t.value);
   const isAllSelected = selectedIds.length === allTeamIds.length;
-    const handleConfirm = () => {
-    if(selectedIds.length === 0){
+
+  const handleConfirm = () => {
+    if (selectedIds.length === 0) {
       alert('Please select at least one team');
       return;
     }
@@ -35,16 +37,18 @@ const TeamSelector = ({
   };
 
   return (
-    <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-      
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <CheckPicker
         value={selectedIds}
         data={teamOptions}
         onChange={(val) => setSelectedIds(val)}
         placeholder="Select Teams"
-        style={{ width: 224 }}
+        style={{ width: 250 }}
+        renderValue={() => `Teams (${selectedIds.length})`}
+        cleanable={false}
+        searchable={false}
         renderExtraFooter={() => (
-          <div style={{fontSize: '15px', fontWeight: 'bold'}}>
+          <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
             <Checkbox
               checked={isAllSelected}
               onChange={(value, checked) =>
@@ -53,12 +57,12 @@ const TeamSelector = ({
             >
               {isAllSelected ? 'Deselect All' : 'Select All'}
             </Checkbox>
+            <Button appearance="primary" block onClick={handleConfirm}>
+              Confirm
+            </Button>
           </div>
         )}
       />
-      <Button appearance="primary" onClick={handleConfirm}>
-        Confirm
-      </Button>
     </div>
   );
 };

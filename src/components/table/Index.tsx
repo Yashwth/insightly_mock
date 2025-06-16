@@ -7,7 +7,7 @@ import { columnConfig } from '../../constants/goalsTable';
 
 const { Column, HeaderCell, Cell } = Table;
 
-const TeamMetrics = ({ selectedTeamIds }: { selectedTeamIds: number[] }) => {
+const TeamMetrics = ({ selectedTeamIds,duration }: { selectedTeamIds: number[], duration: { startDate: number, endDate: number } }) => {
   const [getTeamMetrics, { data: teamData, isLoading, error }] = useGetTeamMetricsMutation();
   const [getAuthorMetrics] = useGetAuthorMetricsMutation();
 
@@ -15,13 +15,15 @@ const TeamMetrics = ({ selectedTeamIds }: { selectedTeamIds: number[] }) => {
   const [currentTeamName, setCurrentTeamName] = useState('');
   const [currentTeamId, setCurrentTeamId] = useState<number | null>(null);
 
+  
   const user = useSelector((state: RootState) => state.auth.user);
   const token = user.user.authToken;
   const userId = user.user.id;
   const accessToken = user.accessToken;
 
-  const startDate = 1747180800;
-  const endDate = 1749686400;
+  const startDate = duration.startDate;
+  const endDate = duration.endDate;
+   
   const orgId = 1960;
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const TeamMetrics = ({ selectedTeamIds }: { selectedTeamIds: number[] }) => {
       },
       accessToken,
     });
-  }, [token, getTeamMetrics, selectedTeamIds]);
+  }, [token, getTeamMetrics, selectedTeamIds,duration]);
 
   const handleTeamClick = async (row: any) => {
     try {
@@ -74,7 +76,7 @@ const TeamMetrics = ({ selectedTeamIds }: { selectedTeamIds: number[] }) => {
       {isAuthorView && (
         <div style={{ marginBottom: '10px' }}>
           <strong>Viewing Individual Metrics for: {currentTeamName}</strong>
-          <button onClick={() => setAuthorData(null)} style={{ marginLeft: '10px' }}>Back</button>
+          <button onClick={() => setAuthorData(null)} style={{ marginLeft: '10px', borderRadius: '10px' }} className="bg-blue-500 hover:bg-blue-600 px-2 py-1">Back</button>
         </div>
       )}
       <Table
@@ -92,13 +94,13 @@ const TeamMetrics = ({ selectedTeamIds }: { selectedTeamIds: number[] }) => {
           }
       >
         <Column width={200} align="center" fixed="left">
-          <HeaderCell >{isAuthorView ? 'Member Name' : 'Team Name'}</HeaderCell>
+          <HeaderCell style={{ fontWeight: 'bold' }} >{isAuthorView ? 'Member Name' : 'Team Name'}</HeaderCell>
           <Cell className='text-blue-500 underline cursor-pointer' dataKey={isAuthorView ? 'authorName' : 'teamName'} />
         </Column>
 
         {columnConfig.map(({ title, dataKey, tooltip }) => (
           <Column key={dataKey} width={160}>
-            <HeaderCell>
+            <HeaderCell style={{ fontWeight: 'bold' }}>
               <Whisper placement="top" trigger="hover" speaker={<Tooltip>{tooltip}</Tooltip>}>
                 {title}
               </Whisper>

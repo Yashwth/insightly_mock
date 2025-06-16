@@ -1,0 +1,43 @@
+@import "src/styles/functions.scss";
+@import "src/styles/variables.scss";
+
+.codingGraphMetadata {
+  display: flex;
+  align-items: center;
+}
+
+.codingGraph {
+  border: toRem(1) solid $greyStroke;
+  border-radius: toRem(5);
+  > div {
+    border-radius: inherit;
+  }
+
+  .heavyDataState {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: toRem(48);
+    height: toRem(378);
+    h3 {
+      font-size: toRem(20);
+      line-height: toRem(32);
+      font-weight: 600;
+      margin: 0;
+      margin-top: toRem(10);
+    }
+    p {
+      margin-top: toRem(6);
+      max-width: toRem(346);
+      font-size: toRem(14);
+      text-align: center;
+    }
+    >:global(.material-icons-round) {
+      font-size: toRem(40);
+      height: toRem(40);
+      width: toRem(40);
+      color: $greySecondary;
+    }
+  }
+}

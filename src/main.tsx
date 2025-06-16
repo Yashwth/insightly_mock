@@ -8,13 +8,15 @@ import { Provider } from 'react-redux'
 import { store } from './store/Store.ts'
 import Dashboard from './pages/Dashboard.tsx'
 import OrgGoals from './pages/OrgGoals.tsx'
+import Cockpit from './pages/Cockpit.tsx'
+import CustomDashboard from './pages/CustomDashboard.tsx'
 import 'rsuite/dist/rsuite.min.css';  // or 'rsuite/styles/index.less';
 
 import { CustomProvider } from 'rsuite';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CustomProvider theme="dark">
+    <CustomProvider theme="light">
     <Provider store={store}>
     <BrowserRouter>
     <Routes>
@@ -22,6 +24,8 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="org-goals" element={<OrgGoals />} />
+        <Route path="cockpit" element={<Cockpit />} />
+        <Route path="template/:id" element={<CustomDashboard />} />
       </Route>
 
     </Routes>

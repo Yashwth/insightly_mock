@@ -24,7 +24,7 @@ const Login = () => {
       dispatch(setUser(res));
       localStorage.setItem('user', JSON.stringify(res));
 
-      if (res) navigate('/dashboard');
+      if (res) window.location.href = '/dashboard/org-goals';
     } catch (err: any) {
       console.log(err);
       alert("login failed");
@@ -33,30 +33,71 @@ const Login = () => {
 
 
   return (
-    <div className ="border border-gray-300 p-4 rounded">
-        {isLoading ?(<div>Loading...</div>):(
-      <div>
-      <h2 className='text-2xl font-bold mb-6'>Login Test</h2>
-      <div className='flex flex-col gap-4 '>
-      <input className='border border-gray-300 p-2 rounded' type="text" placeholder="Email" value={useremail} onChange={(e) => setUserEmail(e.target.value)} />
-      <input className='border border-gray-300 p-2 rounded' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button style={{backgroundColor: isLoading ? 'blue' : 'gray', color: 'white', cursor: 'pointer'}} onClick={handleLogin}>Login</button>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 to-indigo-500 p-6">
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
+        <div className="flex justify-center mb-4">
+          <img
+            src="src\assets\logo-primary-collapsed.svg"
+            className="h-8 w-8 text-indigo-600"
+            
+          />
+        </div>
+  
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6 ">Log in</h2>
+        <p className="text-sm text-center text-gray-500 mb-6 p-2">
+          Get started with insightly.
+        </p>
+  
+        <div className="flex flex-col gap-4">
+          <input
+            type="email"
+            placeholder="Email address"
+            value={useremail}
+            onChange={(e) => setUserEmail(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+  
+          <div className="relative">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+      
+          </div>
+  
+         
+  
+          <button
+            className={`w-full py-2 rounded-md text-white font-medium transition ${
+              isLoading
+                ? 'bg-blue-300 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 hover:rounded-full'
+            }`}
+            onClick={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Log in'}
+          </button>
+        </div>
+  
+      
+        {data && (
+          <pre className="mt-4 p-2 bg-green-100 text-green-800 rounded text-sm overflow-x-auto">
+            Successfull 
+          </pre>
+        )}
+  
+        {error && (
+          <pre className="mt-4 p-2 bg-red-100 text-red-700 rounded text-sm overflow-x-auto">
+            {JSON.stringify(error, null, 2)}
+          </pre>
+        )}
       </div>
     </div>
-      )}
-      {data && (
-        <pre>
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      )}
-      {error && (
-        <pre>
-          {JSON.stringify(error, null, 2)}
-        </pre>
-      )}
-    </div>
-    
   );
-};
+};  
 
 export default Login;

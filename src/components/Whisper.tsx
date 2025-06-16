@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import MediaQuery from './MediaQuery';
+import { FaUser } from 'react-icons/fa';
 
 const Overlay = React.forwardRef(({ style, onClose,user, ...rest }: any, ref: any) => {
   const styles = {
@@ -35,7 +36,7 @@ const Overlay = React.forwardRef(({ style, onClose,user, ...rest }: any, ref: an
   );
 });
 
-const WhisperComponent = ({user}: {user:any}) => (
+const WhisperComponent = ({user,expand}: {user:any,expand:boolean}) => (
   <ButtonToolbar>
     <Whisper
       trigger="click"
@@ -44,7 +45,7 @@ const WhisperComponent = ({user}: {user:any}) => (
         return <Overlay user={user} style={{ left, top }} onClose={onClose} className={className} ref={ref} />;
       }}
     >
-      <Button>Open</Button>
+      <Button>{expand ? 'Profile' : <FaUser size={16} />}</Button>
     </Whisper>
 
    
