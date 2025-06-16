@@ -54,7 +54,7 @@ export type User = {
   isOrgAdmin: boolean
   showCtoDashboard: boolean
   showJiraSetting: boolean
-  cockpitPreference: string[] | null
+  cockpitPrewrence: string[] | null
   showInvite: boolean
   showConfiguration: boolean
   userPreferenceCaptured: boolean

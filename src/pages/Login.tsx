@@ -3,7 +3,7 @@ import { useLoginMutation } from '../api/userService';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo-primary-collapsed.svg'; // ✅ adjust path as needed
+import logo from '../assets/logo-primary-collapsed.svg'; 
 
 const Login = () => {
   const dispatch = useDispatch();

@@ -6,7 +6,7 @@ import TeamSelector from '../components/TeamSelector';
 import { useEffect, useState } from 'react';
 import { Header } from 'rsuite';
 import Duration from '../components/Duration';
-import { useMediaQuery, Stack, Button } from 'rsuite';
+import { useMediaQuery, Stack } from 'rsuite';
 
 const OrgGoals = () => {
   const [isMobile] = useMediaQuery('(max-width: 700px)');
@@ -37,7 +37,7 @@ const OrgGoals = () => {
   return (
     <>
     <Header>
-        <h3>Org Goals</h3>
+        <h3>Goals</h3>
     </Header>
     <hr />
     <Stack direction={isMobile ? 'column' : 'row' } spacing={isMobile ? 0 : 10}>

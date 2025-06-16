@@ -114,7 +114,7 @@ export default function MetricOverview() {
                 type: "column",
             },
             title: {
-                text:"" ,
+                text: graphName ? (graphName?.charAt(0).toUpperCase() + graphName?.slice(1)).replace("-", " ") : "Not Found" ,
             },
             xAxis: {
                 categories,
