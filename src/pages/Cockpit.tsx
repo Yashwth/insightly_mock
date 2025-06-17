@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useGetMetricGraphDataMutation } from "../api/dashboardApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/RootState";
-import NewWorkCard from "../components/NewWorkCard";
 import { useGetTemplatesQuery } from "../api/templates";
 import { Header, Tooltip } from 'rsuite';
 import UserInfoIcon from '@rsuite/icons/UserInfo';
@@ -31,6 +30,7 @@ export default function Cockpit() {
 
   useEffect(() => {
     dispatch(setTemplatesData(templatesData));
+    console.log("trallalo",templatesData);
     localStorage.setItem('templatesData', JSON.stringify(templatesData));
   }, [templatesData]);
 
@@ -38,6 +38,7 @@ export default function Cockpit() {
     <div className="space-y-4 ">
     <Header>
         <h3>Cockpit</h3>
+        
     </Header>
     <hr />
       {templatesData?.map((t) => (

@@ -34,49 +34,62 @@ const Dashboard = () => {
     return (
         <div className="w-screen h-screen flex bg-gray-100">
             <Container>
-                <Sidebar
-                    className={`h-full transition-all duration-300 bg-white shadow-lg border-r border-gray-200`}
-                    width={expand ? 240 : 64}
-                    collapsible
-                >
-                    <Sidenav.Header className="py-4 px-3 border-b border-gray-200">
-                        <Brand expand={expand} />
-                    </Sidenav.Header>
+            <div className="relative group h-full">
+    {/* Sidebar */}
+    <Sidebar
+    className="h-full transition-all duration-300 bg-white shadow-lg border-r border-gray-200 flex flex-col"
+    width={expand ? 240 : 64}
+    collapsible
+>
+    {/* Header */}
+    <Sidenav.Header className="py-4 px-3 border-b border-gray-200">
+        <Brand expand={expand} />
+    </Sidenav.Header>
 
-                    <div className="flex-1 overflow px-1">
-                        <Sidenav expanded={expand} defaultOpenKeys={['1']} appearance="subtle">
-                            <Sidenav.Body>
-                                <Nav defaultActiveKey="1">
-                                    <Nav.Menu
-                                        eventKey="1"
-                                        title="Overview"
-                                        icon={<Icon as={MdDashboard} />}
-                                    >
-                                        <Nav.Item eventKey="1-1" onClick={() => navigate('/dashboard/org-goals')}>
-                                            Goals
-                                        </Nav.Item>
-                                    </Nav.Menu>
+    {/* Navigation (middle section) */}
+    <div className="flex-1 overflow px-1">
+        <Sidenav expanded={expand} defaultOpenKeys={['1']} appearance="subtle">
+            <Sidenav.Body>
+                <Nav defaultActiveKey="1">
+                    <Nav.Menu
+                        eventKey="1"
+                        title="Overview"
+                        icon={<Icon as={MdDashboard} />}
+                    >
+                        <Nav.Item eventKey="1-1" onClick={() => navigate('/dashboard/org-goals')}>
+                            Goals
+                        </Nav.Item>
+                    </Nav.Menu>
 
-                                    <Nav.Menu
-                                        eventKey="2"
-                                        title="Cockpit"
-                                        icon={<Icon as={MdGroup} />}
-                                    >
-                                        <Nav.Item eventKey="2-1" onClick={() => navigate('/dashboard/cockpit')}>
-                                            All Boards
-                                        </Nav.Item>                                   
-                                    </Nav.Menu>
-                                    
-                                </Nav>
-                            </Sidenav.Body>
-                        </Sidenav>
-                    </div>
+                    <Nav.Menu
+                        eventKey="2"
+                        title="Cockpit"
+                        icon={<Icon as={MdGroup} />}
+                    >
+                        <Nav.Item eventKey="2-1" onClick={() => navigate('/dashboard/cockpit')}>
+                            All Boards
+                        </Nav.Item>
+                    </Nav.Menu>
+                </Nav>
+            </Sidenav.Body>
+        </Sidenav>
+    </div>
 
-                    <div className="p-3 border-t border-gray-200 flex flex-col gap-2">
-                        <WhisperComponent user={user} expand={expand} />
-                        <NavToggle expand={expand} onChange={() => setExpand(!expand)} />
-                    </div>
-                </Sidebar>
+    {/* Profile at bottom */}
+    <div className="p-3 border-t border-gray-200 mt-auto mb-10">
+        <WhisperComponent user={user} expand={expand} />
+    </div>
+</Sidebar>
+
+
+    {/* Toggle Button – outside, half-overlapping */}
+    <div
+        className="absolute top-4 -right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+    >
+        <NavToggle expand={expand} onChange={() => setExpand(!expand)} />
+    </div>
+</div>
+
 
                 <Container className="w-full h-full">
                     <Content className="p-5 bg-gray-50 h-full overflow-y-auto">

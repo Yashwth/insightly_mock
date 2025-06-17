@@ -4,6 +4,7 @@ import { Table, Tooltip, Whisper } from 'rsuite';
 import { useGetTeamMetricsMutation, useGetAuthorMetricsMutation } from '../../api/goalApi';
 import { RootState } from '../../store/RootState';
 import { columnConfig } from '../../constants/goalsTable';
+import { Placeholder } from 'rsuite';
 
 const { Column, HeaderCell, Cell } = Table;
 
@@ -43,6 +44,8 @@ const TeamMetrics = ({
   const [getTeamMetrics, { data: teamData, isLoading }] = useGetTeamMetricsMutation();
   const [getAuthorMetrics, {isLoading: authorLoading }] = useGetAuthorMetricsMutation();
 
+  const [authorDataLoading, setIsAuthorDataLoading] = useState(false);
+
   const [authorData, setAuthorData] = useState<any[] | null>(null);
   const [currentTeamName, setCurrentTeamName] = useState('');
 
@@ -76,6 +79,8 @@ const TeamMetrics = ({
   }, [token, selectedTeamIds, duration]);
 
   const handleTeamClick = async (row: any) => {
+    setIsAuthorDataLoading(true); 
+
     try {
       const res = await getAuthorMetrics({
         token,
@@ -93,13 +98,15 @@ const TeamMetrics = ({
       setCurrentTeamName(row.teamName);
     } catch (err) {
       console.error('Author metrics fetch error', err);
+    } finally {
+      setIsAuthorDataLoading(false);
     }
   };
 
   const handleBackToTeams = () => {
     setAuthorData(null);
     setCurrentTeamName('');
-    fetchTeamData(); // <-- Refetch team data
+    fetchTeamData();
   };
 
   const tableData = authorData || (teamData?.filter((d: any) => d.teamName !== 'ALL') || []);
@@ -107,11 +114,14 @@ const TeamMetrics = ({
 
   return (
     <div>
-      {authorLoading ? (
-        <div>Loading...</div>
-      ):""}
-
-      
+    
+ 
+      {authorDataLoading ? (
+        <p> loading...</p>
+      ) : (
+        <></>
+      )}
+  
       {isAuthorView && (
         <div style={{ marginBottom: '10px' }}>
           <strong>Viewing Individual Metrics for: {currentTeamName}</strong>
@@ -137,8 +147,8 @@ const TeamMetrics = ({
           onRowClick={isAuthorView ? undefined : handleTeamClick}
           className="rounded-xl border border-gray-200 shadow-sm text-sm"
           renderEmpty={() =>
-            isLoading ? (
-              <div style={{ padding: 20, textAlign: 'center' }}>Loading...</div>
+            isLoading || authorLoading || authorDataLoading ? (
+              <div style={{ padding: 20, textAlign: 'center' }}><Placeholder rows={5} /></div>
             ) : (
               <div style={{ padding: 20, textAlign: 'center' }}>No data available</div>
             )

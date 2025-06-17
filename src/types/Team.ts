@@ -16,7 +16,7 @@ export type MergedAuthor = {
   inviteStatus: InviteStatus;
   invitationToken: string | null;
   generated: boolean | null;
-  lastActivityDate: string | null;
+  lastActivityDate: string | null;  
   scmProvider: ScmProvider;
   accessRole: AccessRole;
   loginProvider: LoginProvider;

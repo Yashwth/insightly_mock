@@ -11,13 +11,13 @@ import { dashboardApi } from '../api/dashboardApi';
 import { templatesApi } from "../api/templates";
 import cockpitReducer from './slices/cockpit';
 import durationReducer from './slices/durationSlice';
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     teams:teamsReducer,
     cockpit:cockpitReducer,
     duration:durationReducer,
-    
     [goalApi.reducerPath]: goalApi.reducer,
     [insightlyApi.reducerPath]: insightlyApi.reducer,
     [graphqlApi.reducerPath]: graphqlApi.reducer,

@@ -8,13 +8,38 @@ import {
 import { useEffect, useState } from "react";
 import TeamSelector from "../components/TeamSelector";
 import Duration from "../components/Duration";
-import { Header, Stack, Dropdown } from "rsuite";
+import { Header, Stack, Dropdown, Button } from "rsuite";
 import { useGetTeamsQuery } from '../api/graphApi';
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
+import { METRICS_MAP } from '../constants/main'; // update path accordingly
+import { ArrowLeft } from "@rsuite/icons";
+import { useNavigate } from "react-router-dom";
+
+const getMetricConfig = (key: string | undefined) => {
+    return METRICS_MAP.find(metric => metric.value === key);
+};
+
+
+const formatMinutes = (value: number) => {
+    if (value >= 1440) {
+        const days = Math.floor(value / 1440);
+        const hours = Math.floor((value % 1440) / 60);
+        return `${days}d ${hours}h`;
+    } else if (value >= 60) {
+        const hours = Math.floor(value / 60);
+        const mins = value % 60;
+        return `${hours}h ${mins}m`;
+    } else {
+        return `${value}m`;
+    }
+};
+
 
 export default function MetricOverview() {
     const { graphName } = useParams();
+    const navigate = useNavigate();
+
 
     const storedDuration = JSON.parse(localStorage.getItem('duration') || '{}');
 
@@ -89,63 +114,105 @@ export default function MetricOverview() {
         getOverviewMetricGraphData,
     ]);
 
-    const chartOptions = () => {
-        if (!graphData?.graphData) return null;
+const chartOptions = () => {
+    if (!graphData?.graphData) return null;
 
-        const categories = Object.keys(graphData.graphData).sort();
-        const teamMap = new Map();
+    const config = getMetricConfig(graphName);
+    if (!config) return null;
 
-        categories.forEach((week) => {
-            graphData.graphData[week].forEach(({ teamName, totalMetricValue }) => {
-                if (!teamMap.has(teamName)) {
-                    teamMap.set(teamName, []);
-                }
-                teamMap.get(teamName).push(totalMetricValue);
-            });
+    const isTimeMetric = config.valueType === "time";
+    const isPercentageMetric = config.valueType === "percentage";
+
+    const categories = Object.keys(graphData.graphData).sort();
+    const teamMap = new Map();
+
+    // Build dataset for each team
+    categories.forEach((bucket) => {
+        graphData.graphData[bucket].forEach((item: any) => {
+            const teamName = item.teamName;
+            const value = item[config.overviewValueKey];
+
+            if (!teamMap.has(teamName)) {
+                teamMap.set(teamName, []);
+            }
+            teamMap.get(teamName).push(value);
         });
+    });
 
-        const series = Array.from(teamMap.entries()).map(([name, data]) => ({
-            name,
-            data,
-        }));
+    const series = Array.from(teamMap.entries()).map(([name, data]) => ({
+        name,
+        data,
+        type: 'column',
+    }));
 
-        return {
-            chart: {
-                type: "column",
-            },
+    return {
+        chart: {
+            type: "column",
+        },
+        title: {
+            text: config.label || "",
+        },
+        xAxis: {
+            categories,
+            crosshair: true,
             title: {
-                text: graphName ? (graphName?.charAt(0).toUpperCase() + graphName?.slice(1)).replace("-", " ") : "Not Found" ,
+                text: "Time",
             },
-            xAxis: {
-                categories,
-                title: { text: "Week" },
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: isTimeMetric
+                    ? "Average Duration"
+                    : isPercentageMetric
+                    ? "Percentage"
+                    : "Value",
             },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: "Total Metric Value",
+            labels: {
+                formatter: function () {
+                    if (isTimeMetric) return formatMinutes(this.value as number);
+                    if (isPercentageMetric) return `${this.value}%`;
+                    return this.value;
                 },
             },
-            tooltip: {
-                shared: true,
-                valueSuffix: '',
+        },
+        tooltip: {
+            shared: true,
+            useHTML: true,
+            formatter: function () {
+                let tooltip = `<b>${this.x}</b><br/>`;
+                this.points?.forEach(point => {
+                    let value = point.y;
+                    if (isTimeMetric) value = formatMinutes(value);
+                    else if (isPercentageMetric) value = `${value}%`;
+                    tooltip += `<span style="color:${point.color}">\u25CF</span> <b>${point.series.name}</b>: ${value}<br/>`;
+                });
+                return tooltip;
             },
-            plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0,
-                },
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0,
+                groupPadding: 0.1,
             },
-            series,
-        };
+        },
+        series,
     };
+};
 
+    
     const options = chartOptions();
 
     return (
         <div className="">
             <Header>
+                <Stack direction="row" spacing={10}>
+                    <Button id="backButton" onClick={() => navigate(-1)}>
+                        <ArrowLeft />
+                    </Button>
                 <h3>{graphName ? (graphName?.charAt(0).toUpperCase() + graphName?.slice(1)).replace("-", " ") : "Not Found"}</h3>
+                </Stack>
             </Header>
             <hr />
             <Stack direction="row" spacing={10}>
