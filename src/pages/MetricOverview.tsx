@@ -12,7 +12,7 @@ import { Header, Stack, Dropdown, Button } from "rsuite";
 import { useGetTeamsQuery } from '../api/graphApi';
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
-import { METRICS_MAP } from '../constants/main'; // update path accordingly
+import { METRICS_MAP } from '../constants/main'; 
 import { ArrowLeft } from "@rsuite/icons";
 import { useNavigate } from "react-router-dom";
 
@@ -39,7 +39,7 @@ const formatMinutes = (value: number) => {
 export default function MetricOverview() {
     const { graphName } = useParams();
     const navigate = useNavigate();
-
+    const [visibleSeries, setVisibleSeries] = useState<string[]>([]);
 
     const storedDuration = JSON.parse(localStorage.getItem('duration') || '{}');
 
@@ -114,94 +114,122 @@ export default function MetricOverview() {
         getOverviewMetricGraphData,
     ]);
 
-const chartOptions = () => {
-    if (!graphData?.graphData) return null;
-
-    const config = getMetricConfig(graphName);
-    if (!config) return null;
-
-    const isTimeMetric = config.valueType === "time";
-    const isPercentageMetric = config.valueType === "percentage";
-
-    const categories = Object.keys(graphData.graphData).sort();
-    const teamMap = new Map();
-
-    // Build dataset for each team
-    categories.forEach((bucket) => {
-        graphData.graphData[bucket].forEach((item: any) => {
-            const teamName = item.teamName;
-            const value = item[config.overviewValueKey];
-
-            if (!teamMap.has(teamName)) {
-                teamMap.set(teamName, []);
+    const toggleSeriesVisibility = (seriesName: string) => {
+        setVisibleSeries(prev => {
+            if (prev.includes(seriesName)) {
+                return prev.filter(name => name !== seriesName);
+            } else {
+                return [...prev, seriesName];
             }
-            teamMap.get(teamName).push(value);
         });
-    });
+    };
 
-    const series = Array.from(teamMap.entries()).map(([name, data]) => ({
-        name,
-        data,
-        type: 'column',
-    }));
+    const chartOptions = () => {
+        if (!graphData?.graphData) return null;
 
-    return {
-        chart: {
-            type: "column",
-        },
-        title: {
-            text: config.label || "",
-        },
-        xAxis: {
-            categories,
-            crosshair: true,
-            title: {
-                text: "Time",
+        const config = getMetricConfig(graphName);
+        if (!config) return null;
+
+        const isTimeMetric = config.valueType === "time";
+        const isPercentageMetric = config.valueType === "percentage";
+
+        const categories = Object.keys(graphData.graphData).sort();
+        const teamMap = new Map();
+
+        categories.forEach((bucket) => {
+            graphData.graphData[bucket].forEach((item: any) => {
+                const teamName = item.teamName;
+                const value = item[config.overviewValueKey];
+
+                if (!teamMap.has(teamName)) {
+                    teamMap.set(teamName, []);
+                }
+                teamMap.get(teamName).push(value);
+            });
+        });
+
+        const series = Array.from(teamMap.entries()).map(([name, data]) => ({
+            name,
+            data,
+            type: 'column',
+            visible: visibleSeries.length === 0 || visibleSeries.includes(name)
+        }));
+
+        return {
+            chart: {
+                type: "column",
             },
-        },
-        yAxis: {
-            min: 0,
             title: {
-                text: isTimeMetric
-                    ? "Average Duration"
-                    : isPercentageMetric
-                    ? "Percentage"
-                    : "Value",
+                text: config.label || "",
             },
-            labels: {
-                formatter: function () {
-                    if (isTimeMetric) return formatMinutes(this.value as number);
-                    if (isPercentageMetric) return `${this.value}%`;
-                    return this.value;
+            xAxis: {
+                categories,
+                crosshair: true,
+                title: {
+                    text: "Time",
                 },
             },
-        },
-        tooltip: {
-            shared: true,
-            useHTML: true,
-            formatter: function () {
-                let tooltip = `<b>${this.x}</b><br/>`;
-                this.points?.forEach(point => {
-                    let value = point.y;
-                    if (isTimeMetric) value = formatMinutes(value);
-                    else if (isPercentageMetric) value = `${value}%`;
-                    tooltip += `<span style="color:${point.color}">\u25CF</span> <b>${point.series.name}</b>: ${value}<br/>`;
-                });
-                return tooltip;
+            yAxis: {
+                min: 0,
+                title: {
+                    text: isTimeMetric
+                        ? "Average Duration"
+                        : isPercentageMetric
+                        ? "Percentage"
+                        : "Value",
+                },
+                labels: {
+                    formatter: function () {
+                        if (isTimeMetric) return formatMinutes(this.value as number);
+                        if (isPercentageMetric) return `${this.value}%`;
+                        return this.value;
+                    },
+                },
             },
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0,
-                groupPadding: 0.1,
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                formatter: function () {
+                    let tooltip = `<b>${this.x}</b><br/>`;
+                    this.points?.forEach(point => {
+                        let value = point.y;
+                        if (isTimeMetric) value = formatMinutes(value);
+                        else if (isPercentageMetric) value = `${value}%`;
+                        tooltip += `<span style="color:${point.color}">\u25CF</span> <b>${point.series.name}</b>: ${value}<br/>`;
+                    });
+                    return tooltip;
+                },
             },
-        },
-        series,
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0,
+                    groupPadding: 0.1,
+                },
+                series: {
+                    events: {
+                        legendItemClick: function() {
+                            const seriesName = this.name;
+                            toggleSeriesVisibility(seriesName);
+                            return false;
+                        }
+                    },
+                    marker: {   
+                        radius: 4,
+                        symbol: 'circle'
+                    },
+                    showInLegend: true,
+                },
+                line: {
+                    tooltip: {
+                        valueDecimals: 3
+                    }
+                }
+            },
+            series,
+        };
     };
-};
 
-    
     const options = chartOptions();
 
     return (
